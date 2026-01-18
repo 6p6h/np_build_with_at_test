@@ -86,13 +86,13 @@ jobs:
             --apk app/build/outputs/apk/release/*.apk \
             --version "$(jq -r '.elements[0].versionName' app/build/outputs/apk/release/output-metadata.json)" \
             --version-code "$(jq -r '.elements[0].versionCode' app/build/outputs/apk/release/output-metadata.json)"
+          cat latest.json
 
       - name: Upload build artifact for testing
         uses: actions/upload-artifact@v6
         with:
           name: NewPipe-APK-test
-          path:
-            - upstream/app/build/outputs/apk/release/*
+          path: upstream/app/build/outputs/apk/release/*
 
       # - name: "Upload release & JSON"
       #   uses: softprops/action-gh-release@v2
