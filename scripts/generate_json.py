@@ -16,10 +16,10 @@ data = {
             "hash": apk_hash,
             "hash_type": "sha256",
             "version": args.version,
-            "version_code": int(args.version_code)
+            "version_code": int(args.version_code),
         }
     },
-    "stats": {}
+    "stats": {},
 }
 
 with open("latest.json", "w") as f:
