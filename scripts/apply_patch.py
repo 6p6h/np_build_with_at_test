@@ -1,0 +1,43 @@
+#!/usr/bin/env python3
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--newpipe", required=True)
+parser.add_argument("--extractor", required=True)
+args = parser.parse_args()
+
+print(f"Applying patches to {args.newpipe} and {args.extractor}")
+
+newpipe_settings_path = f"{args.newpipe}/settings.gradle.kts"
+newpipe_update_path = f"{args.newpipe}/app/src/main/java/org/schabi/newpipe/NewVersionWorker.kt"
+extractor_path = (
+    f"{args.newpipe}/extractor/src/main/java/"
+    "org/schabi/newpipe/extractor/services/youtube/extractors/"
+    "YoutubeStreamExtractor.java"
+)
+my_json_url = "https://github.com/6p6h/np_build_with_at_test/releases/latest/download/latest.json"
+
+local_patch_str = """
+includeBuild("../NewPipeExtractor") {
+    dependencySubstitution {
+        substitute(module("com.github.TeamNewPipe:NewPipeExtractor"))
+            .using(project(":extractor"))
+    }
+}
+"""
+with open(newpipe_settings_path, 'a', encoding="utf-8") as f:
+    f.write("\n" + local_patch_str)
+
+with open(newpipe_update_path, "r", encoding="utf-8") as f:
+    update_content = f.read()
+update_content = update_content.replace("https://newpipe.net/api/data.json", my_json_url)
+with open(newpipe_update_path, "w", encoding="utf-8") as f:
+    f.write(update_content)
+
+with open(extractor_path, "r", encoding="utf-8") as f:
+    patch_content = f.read()
+patch_content = patch_content.replace('.replaceAll("&tlang=[^&]*", "");', '.replaceAll("&tlang=(?!zh-Hans)[^&]*", "");')
+with open(extractor_path, "w", encoding="utf-8") as f:
+    f.write(patch_content)
+
+print("file patch finished!")

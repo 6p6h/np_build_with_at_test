@@ -1,0 +1,31 @@
+name: "Check upstream NewPipe version"
+
+on:
+  schedule:
+    - cron: "0 0 */3 * *"
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Check latest upstream release"
+        run: |
+          LATEST_TAG=$(gh release list --repo TeamNewPipe/NewPipe --limit 1 | awk '{print $1}')
+          echo "Latest upstream tag: $LATEST_TAG"
+
+          MY_LATEST=$(git ls-remote --tags origin | awk -F/ '{print $3}' | sort -V | tail -n1)
+          echo "My latest tag: $MY_LATEST"
+
+          if [ "$MY_LATEST" = "$LATEST_TAG" ]; then
+            echo "No new version, exiting."
+            exit 0
+          fi
+
+      - name: "Trigger build-release workflow"
+        uses: peter-evans/workflow-dispatch@v1
+        with:
+          workflow: build-release.yml
+          ref: main
+          inputs: |
+            upstream_tag: $LATEST_TAG

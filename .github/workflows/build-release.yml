@@ -1,0 +1,72 @@
+name: "Build NewPipe release"
+
+on:
+  workflow_dispatch:
+    inputs:
+      upstream_tag:
+        description: 'Upstream tag to build'
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout self repo"
+        uses: actions/checkout@v6
+
+      - name: "Setup Java & Gradle cache"
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'gradle'
+
+      - name: "Clone upstream NewPipe"
+        run: |
+          git clone --branch ${{ github.event.inputs.upstream_tag }} https://github.com/TeamNewPipe/NewPipe.git upstream
+          EXT_TAG=$(awk -F'"' '/^\s*teamnewpipe-newpipe-extractor/ {print $2}' upstream/gradle/libs.versions.toml)
+          echo "Extractor tag: $EXT_TAG"
+          git clone --branch $EXT_TAG https://github.com/TeamNewPipe/NewPipeExtractor.git extractor
+
+      - name: "Apply patch"
+        run: |
+          python3 scripts/apply_patch.py --newpipe upstream --extractor extractor
+
+      - name: "Build release APK"
+        run: |
+          cd upstream
+          ./gradlew assembleRelease --stacktrace
+
+      - name: Sign APK
+        run: |
+          set -e
+          echo "$MY_KEYSTORE_B64" | base64 --decode > release.keystore
+          jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 \
+            -keystore release.keystore \
+            -storepass "$KEY_PASS" \
+            app/build/outputs/apk/release/*.apk NPR
+            VERSION_NAME=$(jq -r ".elements[0].versionName" app/build/outputs/apk/release/output-metadata.json)
+            SIGNED_APK="app/build/outputs/apk/release/NewPipe_v${VERSION_NAME}_signed.apk"
+            mv app/build/outputs/apk/release/*.apk "$SIGNED_APK"
+        env:
+          MY_KEYSTORE_B64: ${{ secrets.MY_KEYSTORE_B64 }}
+          KEY_PASS: ${{ secrets.KEY_PASS }}
+
+
+      - name: "Generate latest.json"
+        run: |
+          cd upstream
+          python3 ../scripts/generate_json.py \
+            --apk app/build/outputs/apk/release/*.apk \
+            --version "$(jq -r ".elements[0].versionName" "app/build/outputs/apk/release/output-metadata.json")" \
+            --version-code "$(jq -r ".elements[0].versionCode" "app/build/outputs/apk/release/output-metadata.json")"
+
+      - name: "Upload release & JSON"
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            upstream/app/build/outputs/apk/release/*.apk
+            upstream/latest.json
+          tag_name: ${{ github.event.inputs.upstream_tag }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
