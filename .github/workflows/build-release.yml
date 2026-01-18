@@ -49,34 +49,18 @@ jobs:
         run: |
           cd upstream
           ./gradlew assembleRelease --stacktrace
-
-      - name: Sign APK
+          
+      - name: Sign app APK
+        uses: r0adkll/sign-android-release@v1
+        id: sign_app
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.MY_KEYSTORE_B64 }}
+          alias: NPR
+          keyStorePassword: ${{ secrets.KEY_PASS }}
+          keyPassword: ${{ secrets.KEY_PASS }}
         env:
-          MY_KEYSTORE_B64: ${{ secrets.MY_KEYSTORE_B64 }}
-          KEY_PASS: ${{ secrets.KEY_PASS }}
-        run: |
-          set -e
-
-          cd upstream
-
-          echo "$MY_KEYSTORE_B64" | base64 --decode > release.keystore
-
-          APK_PATH=$(ls app/build/outputs/apk/release/*.apk | head -n1)
-          
-          VERSION_NAME=$(jq -r '.elements[0].versionName' app/build/outputs/apk/release/output-metadata.json)
-          
-          SIGNED_APK="app/build/outputs/apk/release/NewPipe_v${VERSION_NAME}.apk"
-
-          apksigner sign --ks release.keystore \
-            --ks-key-alias NPR \
-            --ks-pass pass:$KEY_PASS \
-            --key-pass pass:$KEY_PASS \
-            --v2-signing-enabled true \
-            --v3-signing-enabled true \
-            --out $SIGNED_APK \
-            $APK_PATH
-
-          echo "Signed APK: $SIGNED_APK"
+          BUILD_TOOLS_VERSION: "34.0.0"
 
       - name: Generate latest.json
         run: |
