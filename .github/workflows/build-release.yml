@@ -92,8 +92,8 @@ jobs:
         with:
           name: NewPipe-APK-test
           path:
-            - upstream/app/build/outputs/apk/release/*
-            - upstream/*.json
+            - "upstream/app/build/outputs/apk/release/*"
+            - "upstream/*.json"
 
       # - name: "Upload release & JSON"
       #   uses: softprops/action-gh-release@v2
