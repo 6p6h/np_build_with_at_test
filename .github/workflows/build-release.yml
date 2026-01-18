@@ -30,7 +30,7 @@ jobs:
           echo "Extractor tag: $EXT_TAG"
 
           git clone --branch "$EXT_TAG" \
-            https://github.com/TeamNewPipe/NewPipeExtractor.git extractor
+            https://github.com/TeamNewPipe/NewPipeExtractor.git NewPipeExtractor
 
       - name: Setup Java & Gradle cache
         uses: actions/setup-java@v5
@@ -85,13 +85,19 @@ jobs:
             --version "$(jq -r '.elements[0].versionName' app/build/outputs/apk/release/output-metadata.json)" \
             --version-code "$(jq -r '.elements[0].versionCode' app/build/outputs/apk/release/output-metadata.json)"
 
-      - name: Upload release & JSON
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ inputs.upstream_tag }}
-          files: |
-            upstream/app/build/outputs/apk/release/*.apk
-            upstream/latest.json
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload build artifact for testing
+          uses: actions/upload-artifact@v3
+          with:
+            name: NewPipe-APK-test
+            path: upstream/app/build/outputs/apk/release/*.apk
+
+      # - name: Upload release & JSON
+      #   uses: softprops/action-gh-release@v1
+      #   with:
+      #     tag_name: ${{ inputs.upstream_tag }}
+      #     files: |
+      #       upstream/app/build/outputs/apk/release/*.apk
+      #       upstream/latest.json
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
