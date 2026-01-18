@@ -91,13 +91,3 @@ jobs:
             name: NewPipe-APK-test
             path: upstream/app/build/outputs/apk/release/*.apk
 
-      # - name: Upload release & JSON
-      #   uses: softprops/action-gh-release@v1
-      #   with:
-      #     tag_name: ${{ inputs.upstream_tag }}
-      #     files: |
-      #       upstream/app/build/outputs/apk/release/*.apk
-      #       upstream/latest.json
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
