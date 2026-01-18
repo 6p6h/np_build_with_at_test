@@ -91,10 +91,10 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: NewPipe-APK-test
-          path:|
-            upstream/app/build/outputs/apk/release/*
-            upstream/*.json
-          
+          path:
+            - upstream/app/build/outputs/apk/release/*
+            - upstream/*.json
+
       # - name: "Upload release & JSON"
       #   uses: softprops/action-gh-release@v2
       #   with:
