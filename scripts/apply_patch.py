@@ -11,7 +11,7 @@ print(f"Applying patches to {args.newpipe} and {args.extractor}")
 newpipe_settings_path = f"{args.newpipe}/settings.gradle.kts"
 newpipe_update_path = f"{args.newpipe}/app/src/main/java/org/schabi/newpipe/NewVersionWorker.kt"
 extractor_path = (
-    f"{args.newpipe}/extractor/src/main/java/"
+    f"{args.extractor}/extractor/src/main/java/"
     "org/schabi/newpipe/extractor/services/youtube/extractors/"
     "YoutubeStreamExtractor.java"
 )
