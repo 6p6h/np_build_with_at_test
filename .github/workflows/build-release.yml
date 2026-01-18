@@ -50,31 +50,31 @@ jobs:
           cd upstream
           ./gradlew assembleRelease --stacktrace
 
-      - name: Sign APK
-        env:
-          MY_KEYSTORE_B64: ${{ secrets.MY_KEYSTORE_B64 }}
-          KEY_PASS: ${{ secrets.KEY_PASS }}
-        run: |
-          set -e
+      # - name: Sign APK
+      #   env:
+      #     MY_KEYSTORE_B64: ${{ secrets.MY_KEYSTORE_B64 }}
+      #     KEY_PASS: ${{ secrets.KEY_PASS }}
+      #   run: |
+      #     set -e
+      #
+      #     echo "$MY_KEYSTORE_B64" | base64 --decode > release.keystore
+      #
+      #     APK_PATH=$(ls app/build/outputs/apk/release/*.apk | head -n1)
+      #
+      #     jarsigner -verbose \
+      #       -keystore release.keystore \
+      #       -storepass "$KEY_PASS" \
+      #       -sigalg SHA256withRSA \
+      #       -digestalg SHA-256 \
+      #       "$APK_PATH" NPR
+      #
+      #     VERSION_NAME=$(jq -r '.elements[0].versionName' app/build/outputs/apk/release/output-metadata.json)
+      #
+      #     SIGNED_APK="app/build/outputs/apk/release/NewPipe_v${VERSION_NAME}_signed.apk"
+      #     mv "$APK_PATH" "$SIGNED_APK"
+      #
+      #     echo "Signed APK: $SIGNED_APK"
 
-          echo "$MY_KEYSTORE_B64" | base64 --decode > release.keystore
-
-          jarsigner \
-            -verbose \
-            -sigalg SHA1withRSA \
-            -digestalg SHA1 \
-            -keystore release.keystore \
-            -storepass "$KEY_PASS" \
-            app/build/outputs/apk/release/*.apk \
-            NPR
-
-          VERSION_NAME=$(jq -r \
-            '.elements[0].versionName' \
-            app/build/outputs/apk/release/output-metadata.json)
-
-          SIGNED_APK="app/build/outputs/apk/release/NewPipe_v${VERSION_NAME}_signed.apk"
-
-          mv app/build/outputs/apk/release/*.apk "$SIGNED_APK"
 
       - name: Generate latest.json
         run: |
@@ -89,7 +89,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: NewPipe-APK-test
-          path: upstream/app/build/outputs/apk/release/*.apk
+          path: upstream/app/build/outputs/apk/release/*
           
       # - name: "Upload release & JSON"
       #   uses: softprops/action-gh-release@v2
