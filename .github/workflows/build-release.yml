@@ -43,7 +43,7 @@ jobs:
         run: |
           python3 scripts/apply_patch.py \
             --newpipe upstream \
-            --extractor extractor
+            --extractor NewPipeExtractor
 
       - name: Build release APK
         run: |
