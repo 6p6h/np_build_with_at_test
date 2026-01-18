@@ -86,8 +86,18 @@ jobs:
             --version-code "$(jq -r '.elements[0].versionCode' app/build/outputs/apk/release/output-metadata.json)"
 
       - name: Upload build artifact for testing
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v6
         with:
           name: NewPipe-APK-test
           path: upstream/app/build/outputs/apk/release/*.apk
+          
+      # - name: "Upload release & JSON"
+      #   uses: softprops/action-gh-release@v2
+      #   with:
+      #     files: |
+      #       upstream/app/build/outputs/apk/release/*.apk
+      #       upstream/latest.json
+      #     tag_name: ${{ github.event.inputs.upstream_tag }}  # 或固定 latest
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
