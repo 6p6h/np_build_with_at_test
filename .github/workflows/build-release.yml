@@ -54,7 +54,7 @@ jobs:
         uses: r0adkll/sign-android-release@v1
         id: sign_app
         with:
-          releaseDirectory: app/build/outputs/apk/release
+          releaseDirectory: upstream/app/build/outputs/apk/release
           signingKeyBase64: ${{ secrets.MY_KEYSTORE_B64 }}
           alias: NPR
           keyStorePassword: ${{ secrets.KEY_PASS }}
