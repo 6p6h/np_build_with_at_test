@@ -69,7 +69,7 @@ jobs:
           rm app/build/outputs/apk/release/app-release-unsigned.apk
 
           python3 ../scripts/generate_json.py \
-            --apk app/build/outputs/apk/release/*.apk \
+            --apk app/build/outputs/apk/release/*signed.apk \
             --version "$(jq -r '.elements[0].versionName' app/build/outputs/apk/release/output-metadata.json)" \
             --version-code "$(jq -r '.elements[0].versionCode' app/build/outputs/apk/release/output-metadata.json)"
           cat latest.json
