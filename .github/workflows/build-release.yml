@@ -16,13 +16,6 @@ jobs:
       - name: Checkout self repo
         uses: actions/checkout@v6
 
-      - name: Setup Java & Gradle cache
-        uses: actions/setup-java@v5
-        with:
-          distribution: temurin
-          java-version: "21"
-          cache: gradle
-
       - name: Clone upstream NewPipe
         run: |
           set -e
@@ -38,6 +31,13 @@ jobs:
 
           git clone --branch "$EXT_TAG" \
             https://github.com/TeamNewPipe/NewPipeExtractor.git extractor
+
+      - name: Setup Java & Gradle cache
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
 
       - name: Apply patch
         run: |
@@ -94,3 +94,4 @@ jobs:
             upstream/latest.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
