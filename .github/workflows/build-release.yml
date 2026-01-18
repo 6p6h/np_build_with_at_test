@@ -86,8 +86,8 @@ jobs:
             --version-code "$(jq -r '.elements[0].versionCode' app/build/outputs/apk/release/output-metadata.json)"
 
       - name: Upload build artifact for testing
-          uses: actions/upload-artifact@v3
-          with:
-            name: NewPipe-APK-test
-            path: upstream/app/build/outputs/apk/release/*.apk
+        uses: actions/upload-artifact@v3
+        with:
+          name: NewPipe-APK-test
+          path: upstream/app/build/outputs/apk/release/*.apk
 
