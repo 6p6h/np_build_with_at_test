@@ -93,16 +93,33 @@ target_str2 = """
 patch_str2 = """
         final JsonArray captionsArray = playerCaptionsTracklistRenderer.getArray("captionTracks");
 
-        // DEBUG dump
         try {
-            java.io.File f = new java.io.File("/sdcard/Download/captions_raw.json");
-            java.io.FileOutputStream os = new java.io.FileOutputStream(f);
-            os.write(captionsArray.toString().getBytes());
-            os.close();
+            org.schabi.newpipe.extractor.downloader.Downloader dl =
+                    org.schabi.newpipe.extractor.NewPipe.getDownloader();
+
+            byte[] data = captionsArray.toString().getBytes("UTF-8");
+
+            java.util.Map<String, java.util.List<String>> headers =
+                    java.util.Collections.singletonMap(
+                            "Content-Type",
+                            java.util.Collections.singletonList("application/json")
+                    );
+
+            org.schabi.newpipe.extractor.downloader.Response r =
+                    dl.post(
+                            "http://192.168.1.64:8080/captions",
+                            headers,
+                            data,
+                            org.schabi.newpipe.extractor.NewPipe.getPreferredLocalization()
+                    );
+
+            System.out.println("POST result: " + r.responseCode());
+
         } catch (Exception e) {
-            android.util.Log.e("NP_RAW_CAPTIONS", "write error", e);
+            System.out.println("POST captions error: " + e);
         }
 """
+
 
 with open(extractor_path, "r", encoding="utf-8") as f:
     patch_content = f.read()
