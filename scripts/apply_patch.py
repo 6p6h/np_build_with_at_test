@@ -78,15 +78,16 @@ patch(extractor_path, target_str2, patch_str2)
 # ================================================================
 
 req_str = """
-    private Request(final Builder builder) {
+                   final boolean automaticLocalizationHeader) {
 """
 req_patch_str = """
-    private Request(final Builder builder) {
+                   final boolean automaticLocalizationHeader) {
         System.out.println("=== Request Built ===");
-        System.out.println("Method: " + builder.httpMethod);
-        System.out.println("URL: " + builder.url);
-        System.out.println("Headers: " + builder.headers);
-        System.out.println("Localization: " + builder.localization);
+        System.out.println("Method: " + httpMethod);
+        System.out.println("URL: " + url);
+        System.out.println("Headers: " + headers);
+        System.out.println("Localization: " + localization);
+        System.out.println("AutoLocalizationHeader: " + automaticLocalizationHeader);
         System.out.println("=====================");
 
 """
