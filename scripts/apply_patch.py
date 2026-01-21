@@ -67,7 +67,8 @@ patch_str2 = """
 
 with open(extractor_path, "r", encoding="utf-8") as f:
     patch_content = f.read()
-patch_content = patch_content.replace(target_str, patch_str)
+# patch_content = patch_content.replace(target_str, patch_str)
+patch_content = patch_content.replace(target_str2, patch_str2)
 with open(extractor_path, "w", encoding="utf-8") as f:
     f.write(patch_content)
 
